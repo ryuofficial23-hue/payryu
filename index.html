@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Payment Ryu offc — Cyberpunk Edition</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        /* ---------- ROOT & FONTS ---------- */
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+        :root {
+            --glow1: #00ffff;
+            --glow2: #ff00ff;
+            --dark: #0d0d1a;
+            --glass: rgba(0, 0, 0, .35);
+            --radius: 16px;
+        }
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Orbitron',monospace}
+
+        body {
+            background: var(--dark);
+            color: #fff;
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(45deg, #00ffff, #ff00ff, #00ffff);
+            background-size: 400% 400%;
+            animation: bgMove 12s linear infinite;
+            opacity: .08;
+            z-index: 0;
+        }
+        @keyframes bgMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* ---------- PARTICLES ---------- */
+        #particles {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+        }
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: var(--glow1);
+            box-shadow: 0 0 6px var(--glow1);
+            animation: float 6s linear infinite;
+        }
+        @keyframes float {
+            0% { transform: translateY(100vh) scale(1); opacity: 1; }
+            100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
+        }
+
+        /* ---------- HEADER ---------- */
+        header {
+            position: sticky;
+            top: 0;
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255,255,255,.1);
+            padding: 14px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10; 
+        }
+        header .logo {
+            font-weight: 900;
+            font-size: 22px;
+            letter-spacing: 2px;
+            text-shadow: 0 0 8px var(--glow1);
+        }
+        header .icon-group {
+            display: flex;
+            align-items: center;
+            gap: 10px; 
+            padding: 5px; 
+            border-radius: 50px; 
+            box-shadow: 0 0 15px var(--glow2); 
+            background: rgba(255, 0, 255, 0.1); 
+            border: 1px solid rgba(255, 0, 255, 0.3);
+        }
+        header .icon {
+            font-size: 24px;
+            cursor: pointer;
+            padding: 6px 10px; 
+            border-radius: 50%;
+            transition: .2s;
+            text-shadow: 0 0 8px var(--glow2);
+        }
+        header .icon:hover {
+            background: rgba(255,0,255,.2); 
+        }
+
+        /* ---------- CONTAINER ---------- */
+        .container {
+            position: relative;
+            z-index: 2; 
+            max-width: 480px;
+            margin: 40px auto;
+            padding: 0 16px;
+            animation: fadeIn .8s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 28px;
+            font-size: 24px;
+            letter-spacing: 1px;
+            text-shadow: 0 0 8px var(--glow1);
+        }
+
+        /* ---------- CARDS ---------- */
+        .card {
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,.1);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 0 20px rgba(0,255,255,.25);
+            transition: .3s;
+        }
+        .card:hover {
+            box-shadow: 0 0 30px rgba(255,0,255,.45);
+            transform: translateY(-4px);
+        }
+        .card div strong {
+            font-size: 14px;
+            color: rgba(255,255,255,.7);
+        }
+        .card div span {
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 0 6px var(--glow1);
+        }
+        .btn {
+            background: transparent;
+            color: var(--glow1);
+            border: 1px solid var(--glow1);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: .2s;
+            box-shadow: 0 0 8px var(--glow1);
+        }
+        .btn:hover {
+            background: var(--glow1);
+            color: var(--dark);
+            box-shadow: 0 0 20px var(--glow1);
+        }
+
+        /* ---------- QRIS ---------- */
+        .qris-display {
+            background: #fff;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            margin-top: 15px;
+            box-shadow: 0 0 15px var(--glow2);
+        }
+        .qris-display img {
+            width: 100%;
+            max-width: 220px;
+            height: auto;
+            border-radius: 8px;
+        }
+        .qris-display span {
+            display: block;
+            margin-top: 10px;
+            color: var(--dark);
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        /* ---------- LISTS ---------- */
+        ul.list {
+            list-style: none;
+        }
+        ul.list li {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,.1);
+            margin-bottom: 12px;
+            padding: 16px;
+            border-radius: 12px;
+            font-weight: 500;
+            box-shadow: 0 0 12px rgba(0,255,255,.15);
+            transition: .2s;
+            cursor: pointer; 
+        }
+        ul.list li:hover {
+            box-shadow: 0 0 20px rgba(255,0,255,.35);
+            transform: translateX(6px);
+        }
+
+        /* ---------- CALCULATOR ---------- */
+        .calc-wrapper {
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,.1);
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: 0 0 30px rgba(0,255,255,.25);
+        }
+        #calcDisplay {
+            width: 100%;
+            font-size: 28px;
+            padding: 12px;
+            margin-bottom: 14px;
+            border: 1px solid rgba(255,255,255,.2);
+            border-radius: 8px;
+            background: rgba(0,0,0,.4);
+            color: #fff;
+            text-align: right;
+            letter-spacing: 2px;
+            box-shadow: inset 0 0 8px rgba(0,255,255,.3);
+        }
+        .calc-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        .calc-btn {
+            padding: 18px 0;
+            font-size: 20px;
+            border: 1px solid rgba(255,255,255,.1);
+            border-radius: 12px;
+            background: rgba(255,255,255,.08);
+            color: #fff;
+            cursor: pointer;
+            transition: .2s;
+            box-shadow: 0 0 8px rgba(0,255,255,.15);
+        }
+        .calc-btn:hover {background: rgba(255,255,255,.15); box-shadow: 0 0 16px var(--glow1);}
+        .calc-btn.op {background: rgba(255,0,255,.15); border-color: var(--glow2); box-shadow: 0 0 12px var(--glow2);}
+        .calc-btn.eq {background: rgba(0,255,255,.25); border-color: var(--glow1); box-shadow: 0 0 12px var(--glow1); grid-column: span 2;}
+        .hidden {display:none;}
+    </style>
+</head>
+<body>
+
+<audio id="backgroundMusic" controls loop style="display:none;">
+    <source src="https://files.catbox.moe/i63wkq.mp3" type="audio/mp3">
+</audio>
+
+<div id="particles"></div>
+
+<header>
+    <div class="logo">PAYMENT Ryu</div>
+    <div class="icon-group">
+        <span class="icon" id="menuBtn">☰</span>
+        <span class="icon" id="profileBtn">👤</span>
+    </div>
+</header>
+
+<!-- HOME -->
+<div id="homePage" class="container">
+    <h2>Selamat Datang Di Payment Ryu Official</h2>
+
+    <div class="card" id="qrisCard">
+        <div>
+            <strong>QRIS (All Payment)</strong><br>
+            <span id="qrisId">Scan untuk membayar</span>
+        </div>
+        <button class="btn" onclick="toggleQrisDisplay()">Tampilkan QR</button>
+    </div>
+
+    <!-- ✅ QRIS sudah fix -->
+    <div id="qrisDisplay" class="qris-display hidden">
+        <img src="https://files.catbox.moe/yt4st6.jpg" alt="QRIS Code"> 
+        <span>QRIS ini dapat discan dari DANA, GoPay, OVO, ShopeePay, dll.</span>
+    </div>
+
+    <div class="card"><div><strong>DANA</strong><br><span id="dana">08811147684</span></div><button class="btn" onclick="copyText('dana')">Copy</button></div>
+    <div class="card"><div><strong>WhatsApp</strong><br><span id="wa">08811147684</span></div><button class="btn" onclick="copyText('wa')">Copy</button></div>
+    <div class="card"><div><strong>TikTok</strong><br><span id="tiktok">@prastya123</span></div><button class="btn" onclick="copyText('tiktok')">Copy</button></div>
+</div>
+
+<!-- MENU -->
+<div id="menuPage" class="container hidden">
+    <h2>PILIHAN PRODUK</h2>
+    <ul class="list">
+        <li onclick="showPage('listPanelPage')">List Panel</li>
+        <li onclick="showPage('listScriptPage')">List Script & Layanan</li>
+        <li onclick="showPage('calcPage')">Kalkulator</li>
+    </ul>
+    <button class="btn" onclick="showPage('homePage')">Kembali</button>
+</div>
+
+<!-- LIST PANEL -->
+<div id="listPanelPage" class="container hidden">
+    <h2>LIST PANEL</h2>
+    <ul class="list">
+        <li>– Panel Pterodactyl</li>
+        <li>– Admin Panel via APK</li>
+        <li>– Reseller Panel</li>
+        <li>– PT Panel</li>
+    </ul>
+    <button class="btn" onclick="showPage('menuPage')">Kembali ke Menu</button>
+</div>
+
+<!-- LIST SCRIPT -->
+<div id="listScriptPage" class="container hidden">
+    <h2>LIST LAYANAN</h2>
+    <ul class="list">
+        <li>– Top-Up</li>
+        <li>– Script Bot WhatsApp</li>
+        <li>– Banned / Unbanned</li>
+        <li>– Aplikasi QRIS No KTP</li>
+        <li>– Aplikasi Nonton Bioskop</li>
+        <li>– 150 Aplikasi JB</li>
+    </ul>
+    <button class="btn" onclick="showPage('menuPage')">Kembali ke Menu</button>
+</div>
+
+<!-- KALKULATOR -->
+<div id="calcPage" class="container hidden">
+    <h2>KALKULATOR</h2>
+    <div class="calc-wrapper">
+        <input id="calcDisplay" type="text" disabled>
+        <div class="calc-grid">
+            <button class="calc-btn" onclick="calcPress('7')">7</button>
+            <button class="calc-btn" onclick="calcPress('8')">8</button>
+            <button class="calc-btn" onclick="calcPress('9')">9</button>
+            <button class="calc-btn op" onclick="calcPress('/')">÷</button>
+            <button class="calc-btn" onclick="calcPress('4')">4</button>
+            <button class="calc-btn" onclick="calcPress('5')">5</button>
+            <button class="calc-btn" onclick="calcPress('6')">6</button>
+            <button class="calc-btn op" onclick="calcPress('*')">×</button>
+            <button class="calc-btn" onclick="calcPress('1')">1</button>
+            <button class="calc-btn" onclick="calcPress('2')">2</button>
+            <button class="calc-btn" onclick="calcPress('3')">3</button>
+            <button class="calc-btn op" onclick="calcPress('-')">−</button>
+            <button class="calc-btn" onclick="calcPress('0')">0</button>
+            <button class="calc-btn" onclick="calcClear()">C</button>
+            <button class="calc-btn eq" onclick="calcEqual()">=</button>
+            <button class="calc-btn op" onclick="calcPress('+')">+</button>
+        </div>
+    </div>
+    <button class="btn" style="margin-top:16px" onclick="showPage('menuPage')">Kembali</button>
+</div>
+
+<!-- PROFIL -->
+<div id="profilePage" class="container hidden">
+    <h2>PROFIL Ryu</h2>
+    <div class="card">
+        <ul class="list profile-list">
+            <li><strong>Nama:</strong> Ryu Official</li>
+            <li><strong>Nomor Admin (WA):</strong> 08811147684</li>
+            <li><strong>Tujuan Website:</strong> Memudahkan kalian menghubungi admin</li>
+        </ul>
+    </div>
+    <button class="btn" onclick="showPage('homePage')">Kembali</button>
+</div>
+
+<script>
+function showPage(pageId){document.querySelectorAll('.container').forEach(c=>c.classList.add('hidden'));document.getElementById(pageId).classList.remove('hidden');}
+function copyText(id){const t=document.getElementById(id).innerText;navigator.clipboard.writeText(t);alert('Tersalin: '+t);}
+document.getElementById('menuBtn').onclick=()=>showPage('menuPage');
+document.getElementById('profileBtn').onclick=()=>showPage('profilePage');
+function toggleQrisDisplay(){const d=document.getElementById('qrisDisplay');const b=document.querySelector('#qrisCard .btn');if(d.classList.contains('hidden')){d.classList.remove('hidden');b.textContent='Sembunyikan QR';}else{d.classList.add('hidden');b.textContent='Tampilkan QR';}}
+const particles=document.getElementById('particles');function createParticle(){const p=document.createElement('div');p.className='particle';p.style.left=Math.random()*100+'%';p.style.animationDuration=(Math.random()*3+3)+'s';p.style.opacity=Math.random();particles.appendChild(p);setTimeout(()=>p.remove(),6000);}setInterval(createParticle,100);
+</script>
+
+</body>
+</html>
